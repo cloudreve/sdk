@@ -1,5 +1,8 @@
 # Cloudreve SDK
 
+> [!IMPORTANT]
+> Under active development. Features and interfaces may change. Stay tuned for updates.
+
 A portable TypeScript client for Cloudreve. Typed file operations, resumable transfers, sharing, and durable sessions for Node.js, browsers, and React Native.
 
 ## Install

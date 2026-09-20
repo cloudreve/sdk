@@ -131,6 +131,7 @@ export class Authentication {
         image: string;
         ticket: string;
     }>;
+    cliOAuthApplication(operationOptions?: CallOptions): Promise<OAuthApplication>;
     // (undocumented)
     config(operationOptions?: CallOptions): Promise<LoginConfig>;
     // (undocumented)
@@ -209,6 +210,14 @@ export interface CaptchaAnswer {
 export function childUri(parent: string, name: string): string;
 
 // @public
+export const CLI_OAUTH_CLIENT: Readonly<{
+    readonly clientId: "6326d2af-2fef-4a99-94da-1ee8ef0ca53f";
+    readonly clientSecret: "yoFiNgbxvSCzK2Nm92T3TNaREh4qBjq4";
+    readonly redirectUri: "http://127.0.0.1/callback";
+    readonly scope: "profile email openid offline_access UserInfo.Write Workflow.Write Files.Write Shares.Write";
+}>;
+
+// @public
 export interface ClientOptions extends SessionOptions {
     // (undocumented)
     downloadTransport?: Transport;
@@ -233,6 +242,13 @@ export function createClient(options: ClientOptions): Promise<{
     account: Profile;
     webdav: WebDAV;
 }>;
+
+// @public
+export function createCliOAuthAuthorizationUrl(endpoint: string, options: {
+    state: string;
+    challenge: string;
+    redirectUri: string;
+}): string;
 
 // @public
 export function createPublicClient(options: PublicClientOptions): {
@@ -934,7 +950,7 @@ export const mediaMetadataKeys: {
     readonly duration: "stream:duration";
 };
 
-// @public (undocumented)
+// @public
 export const MIN_OAUTH_VERSION = "4.12.0";
 
 // @public (undocumented)

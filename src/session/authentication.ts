@@ -1,6 +1,9 @@
+import { CLI_OAUTH_CLIENT } from "./cli-oauth.ts";
 import * as v from "valibot";
 import { nonempty } from "../protocol/index.ts";
 import {
+  OAuthApplicationSchema,
+  type OAuthApplication,
   CredentialOptionsSchema,
   CredentialResponseSchema,
   type CredentialOptions,
@@ -342,6 +345,42 @@ export class Authentication {
           method: "DELETE",
           body: JSON.stringify({ refresh_token: string(refreshToken) }),
         });
+      },
+      normalized,
+      this.signal,
+    );
+  }
+
+  /** Discover built-in CLI OAuth support without inferring it from the server version. */
+  async cliOAuthApplication(operationOptions?: CallOptions): Promise<OAuthApplication> {
+    const normalized = toRequestOptions(operationOptions);
+
+    return withDeadline(
+      async (signal) => {
+        try {
+          return decode(
+            OAuthApplicationSchema,
+            await this.call(`session/oauth/app/${CLI_OAUTH_CLIENT.clientId}`, {
+              ...normalized,
+              signal,
+              timeoutMs: 0,
+            }),
+            "Invalid CLI OAuth application",
+          );
+        } catch (error) {
+          if (error instanceof ApiError && error.code === 404) {
+            throw new ApiError(
+              404,
+              "This server does not provide the built-in Cloudreve CLI OAuth application",
+              undefined,
+              undefined,
+              undefined,
+              { kind: "unsupported", cause: error },
+            );
+          }
+
+          throw error;
+        }
       },
       normalized,
       this.signal,

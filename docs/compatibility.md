@@ -19,6 +19,6 @@ The optional Docker contract suite runs against digest-pinned **4.17.0** and **4
 - Category URIs are server presets and cannot be combined with other search filters. Paging and sorting remain independent.
 - Transfer checkpoints belong to one server, account, and source. Filesystem replacement, native encryption, and OS permissions remain application responsibilities.
 - Anonymous archive downloads support files and share roots containing only files. Directory archives require authenticated access because Community guest traversal can omit descendants.
-- OAuth requires caller-provided credentials. No client secret is embedded in the package.
+- Custom OAuth applications require caller-provided credentials. The built-in CLI registration exposes a distributed public client secret; it is not confidential. The CLI authorization helper requires PKCE. CLI login uses a caller-owned HTTP listener at `127.0.0.1` with a dynamically bound port and the `/callback` path; the actual redirect URI is reused for token exchange. Probe `Authentication.cliOAuthApplication` to discover server support rather than inferring a minimum server version.
 
 `ApiError` retains backend codes, operation data, partial failures, and structured error kinds. Applications own translated messages and secret-safe output.

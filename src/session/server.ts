@@ -1,7 +1,7 @@
 import parse from "semver/functions/parse.js";
 import { record, type Transport } from "../protocol/index.ts";
 
-/** @public */
+/** Earliest generic OAuth release; discover built-in applications separately. @public */
 export const MIN_OAUTH_VERSION = "4.12.0";
 
 /** @public */

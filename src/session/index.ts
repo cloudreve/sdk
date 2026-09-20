@@ -547,3 +547,5 @@ export * from "./authentication.ts";
 export * from "./server.ts";
 
 export * from "./ceremony.ts";
+
+export * from "./cli-oauth.ts";
