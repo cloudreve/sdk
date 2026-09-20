@@ -8,7 +8,7 @@ A portable TypeScript client for Cloudreve. Typed file operations, resumable tra
 ## Install
 
 ```sh
-npm install https://github.com/cloudreve/sdk/releases/download/v1.0.0/cloudreve-sdk-1.0.0.tgz
+npm install https://github.com/cloudreve/sdk/releases/download/v1.1.0/cloudreve-sdk-1.1.0.tgz
 ```
 
 ## Usage
