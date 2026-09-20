@@ -34,15 +34,14 @@ for (const file of files) {
 
 This example lists a public share. Authenticated clients combine `Authentication` from `@cloudreve/sdk/session`, `createClient`, and an application credential store.
 
-## Modules
+## Features
 
-| Area                 | Modules                                  |
-| -------------------- | ---------------------------------------- |
-| **Connect**          | `protocol` · `session`                   |
-| **Store & transfer** | `files` · `transfers`                    |
-| **Share & manage**   | `shares` · `jobs` · `profile` · `webdav` |
-
-The root export provides the complete client. Individual entry points expose each module. The SDK handles token refresh and request cancellation; applications own credential persistence and platform integration.
+- **File management** — Browse, search, copy, move, and delete files and folders.
+- **Resumable transfers** — Upload and download files with progress tracking and cancellation.
+- **Sharing** — Create and manage shares, access public shares, and retrieve download links.
+- **Authentication** — Password and OAuth sign-in with automatic token refresh.
+- **Account management** — Manage profiles, WebDAV accounts, and background jobs.
+- **Cross-platform support** — Typed APIs for Node.js, browsers, and React Native.
 
 ## Development
 
