@@ -1,15 +1,19 @@
 # Cloudreve SDK
 
+A portable TypeScript client for Cloudreve. Typed file operations, resumable transfers, sharing, and durable sessions for **Node.js, browsers, and React Native**.
+
 > [!IMPORTANT]
 > Under active development. Features and interfaces may change. Stay tuned for updates.
 
-A portable TypeScript client for Cloudreve. Typed file operations, resumable transfers, sharing, and durable sessions for Node.js, browsers, and React Native.
+[API reference](docs/api/sdk.api.md) · [Compatibility](docs/compatibility.md) · [Releases](https://github.com/cloudreve/sdk/releases) · [MIT](LICENSE)
 
 ## Install
 
 ```sh
 npm install https://github.com/cloudreve/sdk/releases/download/v1.1.0/cloudreve-sdk-1.1.0.tgz
 ```
+
+Published as a versioned release archive; an npm registry release is not yet available.
 
 ## Usage
 
@@ -21,28 +25,36 @@ const client = createPublicClient({
   transport: fetch,
 });
 
-const entries = await client.files.list("cloudreve://SHARE_ID@share/");
+const { files } = await client.files.list("cloudreve://SHARE_ID@share/");
 
-console.log(entries);
+for (const file of files) {
+  console.log(file.name);
+}
 ```
 
-Authenticated clients combine `Authentication` from `@cloudreve/sdk/session` with `createClient` and an application credential store. The SDK handles refresh and cancellation; applications own persistence and platform integration.
+This example lists a public share. Authenticated clients combine `Authentication` from `@cloudreve/sdk/session`, `createClient`, and an application credential store.
 
-The package exposes the complete client and individual modules: `protocol`, `session`, `files`, `transfers`, `shares`, `jobs`, `profile`, and `webdav`. [API reference](docs/api/sdk.api.md) and [compatibility notes](docs/compatibility.md).
+## Modules
+
+| Area                 | Modules                                  |
+| -------------------- | ---------------------------------------- |
+| **Connect**          | `protocol` · `session`                   |
+| **Store & transfer** | `files` · `transfers`                    |
+| **Share & manage**   | `shares` · `jobs` · `profile` · `webdav` |
+
+The root export provides the complete client. Individual entry points expose each module. The SDK handles token refresh and request cancellation; applications own credential persistence and platform integration.
 
 ## Development
 
-[mise](https://mise.jdx.dev) manages pinned tools; Bun installs dependencies.
+Tools are pinned with [mise](https://mise.jdx.dev/); dependencies use Bun.
 
 ```sh
-mise trust
 mise install
 mise run setup
 mise run check
 mise run package:check
-mise run test:e2e
 ```
 
-Checks cover formatting, lint, types, module boundaries, public API changes, and at least 95% statements, branches, functions, and lines across all production source. Package checks install the tarball into an isolated consumer and verify Node execution, browser bundling, and TypeScript declarations.
+---
 
-GitHub Actions runs build, unit, and package checks on Linux, macOS, and Windows on every push and pull request. Optional Docker E2E runs on Linux against pinned Community 4.17.0 and 4.18.0 images; select a version with `CR_CI_VERSION` and run `mise run test:e2e`.
+[Cloudreve](https://github.com/cloudreve/cloudreve) · [Foundation](https://github.com/cloudreve/foundation) · **SDK** · [CLI](https://github.com/cloudreve/cli)
