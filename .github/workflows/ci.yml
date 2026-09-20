@@ -1,0 +1,48 @@
+name: Validation
+on:
+  push:
+  pull_request:
+  workflow_call:
+    inputs:
+      ref:
+        type: string
+        default: ""
+permissions:
+  contents: read
+jobs:
+  quality:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-latest, windows-latest]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+      - uses: jdx/mise-action@v3
+        with:
+          version: 2026.9.11
+          cache: true
+      - uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+      - run: mise exec -- bun install --frozen-lockfile --ignore-scripts
+      - run: mise run check
+      - run: mise run package:check
+      - name: Select release package
+        if: inputs.ref != '' && runner.os == 'Linux'
+        id: package
+        shell: bash
+        run: echo "version=$(mise exec -- node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        if: inputs.ref != '' && runner.os == 'Linux'
+        with:
+          name: sdk-release-package
+          path: |
+            .artifacts/cloudreve-sdk-${{ steps.package.outputs.version }}.tgz
+            .artifacts/cloudreve-sdk-${{ steps.package.outputs.version }}.tgz.sha256
+          if-no-files-found: error

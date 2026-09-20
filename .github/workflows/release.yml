@@ -1,0 +1,110 @@
+name: Release
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Explicit stable version (leave empty when choosing a bump)
+        type: string
+        default: ""
+      bump:
+        description: Semantic version increment
+        type: choice
+        options: [none, patch, minor, major]
+        default: none
+permissions:
+  contents: read
+concurrency:
+  group: release
+  cancel-in-progress: false
+jobs:
+  version:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    outputs:
+      version: ${{ steps.candidate.outputs.version }}
+      commit: ${{ steps.commit.outputs.commit }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+      - uses: jdx/mise-action@v3
+        with:
+          version: 2026.9.11
+          cache: true
+      - uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: bun-${{ runner.os }}-
+      - name: Set release version
+        id: candidate
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+          RELEASE_BUMP: ${{ inputs.bump }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mise exec -- node --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          import { execFileSync } from 'node:child_process';
+          import { readFileSync, writeFileSync, appendFileSync } from 'node:fs';
+          import { releaseVersion } from './tooling/release-version.mjs';
+          const manifest = JSON.parse(readFileSync('package.json', 'utf8'));
+          const version = releaseVersion(manifest.version, process.env.RELEASE_VERSION, process.env.RELEASE_BUMP);
+          const tag = `v${version}`;
+          assert.equal(execFileSync('git', ['ls-remote', '--tags', 'origin', `refs/tags/${tag}`], { encoding: 'utf8' }).trim(), '', 'Release tag already exists');
+          let exists = true;
+          try {
+            execFileSync('gh', ['api', `repos/${process.env.GITHUB_REPOSITORY}/releases/tags/${tag}`], { stdio: 'pipe' });
+          } catch (error) {
+            if (!String(error.stderr).includes('(HTTP 404)')) throw error;
+            exists = false;
+          }
+          assert(!exists, 'GitHub release already exists');
+          if (manifest.version !== version) {
+            manifest.version = version;
+            writeFileSync('package.json', JSON.stringify(manifest, null, 2) + '\n');
+          }
+          appendFileSync(process.env.GITHUB_OUTPUT, `version=${version}\n`);
+          JS
+      - name: Commit changed version and lockfile
+        id: commit
+        run: |
+          mise exec -- bun install --lockfile-only --ignore-scripts
+          if ! git diff --quiet -- package.json bun.lock; then
+            git config user.name github-actions[bot]
+            git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+            git add package.json bun.lock
+            git commit -m "chore: release ${{ steps.candidate.outputs.version }}"
+            git push origin HEAD:master
+          fi
+          echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+  validate:
+    needs: version
+    uses: ./.github/workflows/ci.yml
+    with:
+      ref: ${{ needs.version.outputs.commit }}
+  publish:
+    needs: [version, validate]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.version.outputs.commit }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: sdk-release-package
+          path: release
+      - name: Publish verified package
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.version.outputs.version }}
+          COMMIT: ${{ needs.version.outputs.commit }}
+        run: |
+          cd release
+          sha256sum --check "cloudreve-sdk-$VERSION.tgz.sha256"
+          cd ..
+          gh release create "v$VERSION" --target "$COMMIT" --title "v$VERSION" --notes "TypeScript client for Cloudreve, including sessions, files, transfers, shares, jobs, profiles, and WebDAV." \
+            "release/cloudreve-sdk-$VERSION.tgz" "release/cloudreve-sdk-$VERSION.tgz.sha256"

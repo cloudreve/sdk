@@ -1,0 +1,11 @@
+node_modules/
+dist/
+coverage/
+.artifacts/
+mise.local.toml
+
+# Local agent instructions and validation receipts
+AGENTS.md
+validation.json
+.runtime/
+.act/

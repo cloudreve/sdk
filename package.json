@@ -1,0 +1,112 @@
+{
+  "name": "@cloudreve/sdk",
+  "version": "1.0.0",
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "src",
+    "docs"
+  ],
+  "exports": {
+    "./protocol": {
+      "types": "./dist/protocol/index.d.ts",
+      "react-native": "./src/protocol/index.ts",
+      "default": "./dist/protocol/index.js"
+    },
+    "./session": {
+      "types": "./dist/session/index.d.ts",
+      "react-native": "./src/session/index.ts",
+      "default": "./dist/session/index.js"
+    },
+    "./files": {
+      "types": "./dist/files/index.d.ts",
+      "react-native": "./src/files/index.ts",
+      "default": "./dist/files/index.js"
+    },
+    "./transfers": {
+      "types": "./dist/transfers/index.d.ts",
+      "react-native": "./src/transfers/index.ts",
+      "default": "./dist/transfers/index.js"
+    },
+    "./shares": {
+      "types": "./dist/shares/index.d.ts",
+      "react-native": "./src/shares/index.ts",
+      "default": "./dist/shares/index.js"
+    },
+    "./webdav": {
+      "types": "./dist/webdav/index.d.ts",
+      "react-native": "./src/webdav/index.ts",
+      "default": "./dist/webdav/index.js"
+    },
+    "./jobs": {
+      "types": "./dist/jobs/index.d.ts",
+      "react-native": "./src/jobs/index.ts",
+      "default": "./dist/jobs/index.js"
+    },
+    "./profile": {
+      "types": "./dist/profile/index.d.ts",
+      "react-native": "./src/profile/index.ts",
+      "default": "./dist/profile/index.js"
+    },
+    "./client": {
+      "types": "./dist/client.d.ts",
+      "react-native": "./src/client.ts",
+      "default": "./dist/client.js"
+    },
+    ".": {
+      "types": "./dist/index.d.ts",
+      "react-native": "./src/index.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "arch:check": "depcruise src --config .dependency-cruiser.mjs",
+    "package:check": "node tooling/package-check.mjs",
+    "check": "bun run format:check && bun run lint && bun run typecheck && bun run arch:check && bun run test:coverage && bun run api:check",
+    "format": "prettier --write src tests tooling docs .github *.json *.ts *.mjs README.md CONTRIBUTING.md",
+    "format:check": "prettier --check src tests tooling docs .github *.json *.ts *.mjs README.md CONTRIBUTING.md",
+    "test:contract": "bun run build && node tests/contract/run.mjs",
+    "api:check": "bun run build && node tooling/api-extract.mjs",
+    "api:update": "bun run build && node tooling/api-extract.mjs --local",
+    "lint": "eslint src tests tooling *.ts *.mjs",
+    "test:mutation": "stryker run",
+    "test:e2e": "bun run build && node tooling/ci/e2e.mjs",
+    "lint:fix": "eslint src tests tooling *.ts *.mjs --fix"
+  },
+  "devDependencies": {
+    "@cloudreve/quality": "https://github.com/cloudreve/foundation/releases/download/v1.0.0/cloudreve-quality-1.0.0.tgz",
+    "@cloudreve/testkit": "https://github.com/cloudreve/foundation/releases/download/v1.0.0/cloudreve-testkit-1.0.0.tgz",
+    "@microsoft/api-extractor": "7.59.1",
+    "@stryker-mutator/core": "10.0.0",
+    "@stryker-mutator/vitest-runner": "10.0.0",
+    "@types/semver": "7.7.1",
+    "@vitest/coverage-v8": "4.1.11",
+    "dependency-cruiser": "18.2.0",
+    "esbuild": "0.27.4",
+    "eslint": "9.39.5",
+    "fast-check": "4.9.0",
+    "msw": "2.15.0",
+    "prettier": "3.9.6",
+    "typescript": "6.0.3",
+    "vitest": "4.1.11"
+  },
+  "dependencies": {
+    "valibot": "1.5.0",
+    "semver": "7.7.4"
+  },
+  "description": "Portable TypeScript client for Cloudreve",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cloudreve/sdk.git"
+  },
+  "homepage": "https://github.com/cloudreve/sdk",
+  "bugs": {
+    "url": "https://github.com/cloudreve/sdk/issues"
+  },
+  "license": "MIT"
+}

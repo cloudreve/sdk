@@ -1,0 +1,51 @@
+[tools]
+node = "24.5.0"
+bun = "1.4.0"
+lefthook = "2.1.4"
+
+[settings]
+lockfile = true
+experimental = true
+
+[tasks.setup]
+run = ["bun install --frozen-lockfile --ignore-scripts", "node tooling/setup.mjs"]
+[tasks.doctor]
+run = ["node --version", "bun --version"]
+[tasks.build]
+run = "bun run build"
+[tasks.typecheck]
+run = "bun run typecheck"
+[tasks.test]
+run = "bun run test"
+[tasks."arch:check"]
+run = "bun run arch:check"
+[tasks."package:check"]
+run = "bun run package:check"
+[tasks.check]
+run = "bun run check"
+
+[tasks.format]
+run = ["bun run lint:fix", "bun run format", "bun run lint:fix"]
+[tasks."format:check"]
+run = "bun run format:check"
+[tasks."arch:test"]
+run = "bun run test tests/architecture"
+
+[tasks."test:contract"]
+run = "bun run test:contract"
+
+[tasks."api:check"]
+run = "bun run api:check"
+[tasks."api:update"]
+run = "bun run api:update"
+
+[tasks.lint]
+run = "bun run lint"
+[tasks."test:mutation"]
+run = "bun run test:mutation"
+
+[tasks."test:e2e"]
+run = "bun run test:e2e"
+
+[tasks."lint:fix"]
+run = "bun run lint:fix"

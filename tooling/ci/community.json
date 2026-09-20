@@ -1,0 +1,10 @@
+[
+  {
+    "version": "4.17.0",
+    "image": "cloudreve/cloudreve@sha256:e3c5684c7e4532b0de329d3de9aafe75ca85d07f19ae5307830eb8c0197858c6"
+  },
+  {
+    "version": "4.18.0",
+    "image": "cloudreve/cloudreve@sha256:d24705c8b252ce4755a890c6d668f9311bdb97769e68b255974e6f16de85b886"
+  }
+]
