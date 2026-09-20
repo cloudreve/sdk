@@ -19,7 +19,7 @@ concurrency:
 jobs:
   version:
     if: github.ref == 'refs/heads/master'
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     outputs:
@@ -87,7 +87,7 @@ jobs:
       ref: ${{ needs.version.outputs.commit }}
   publish:
     needs: [version, validate]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:

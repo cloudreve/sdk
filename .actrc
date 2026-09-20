@@ -4,7 +4,7 @@
 --var-file /dev/null
 --concurrent-jobs 1
 --rm
--P ubuntu-24.04=ghcr.io/catthehacker/ubuntu:act-24.04@sha256:62d572b92f9f32d3427b6d220ad1f9dca9c7b6ffad37d295425037dbff78abaf
+-P ubuntu-latest=ghcr.io/catthehacker/ubuntu:act-24.04@sha256:62d572b92f9f32d3427b6d220ad1f9dca9c7b6ffad37d295425037dbff78abaf
 --pull=false
 --network bridge
 --container-daemon-socket /var/run/docker.sock
